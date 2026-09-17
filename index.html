@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>MIG - Vibe Chat & Call</title>
     <!-- Fonts & Icons -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -36,39 +36,42 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        body {
+        /* 100dvh for proper mobile browser bar handling */
+        html, body {
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
             background-color: #000;
+            color: var(--text-color);
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            color: var(--text-color);
-            overflow: hidden;
         }
 
-        /* Smartphone Container Frame */
+        /* Responsive Container Frame */
         .app-container {
             width: 100%;
-            max-width: 400px;
-            height: 100vh;
-            max-height: 800px;
+            max-width: 440px;
+            height: 100%;
+            height: 100dvh;
             background-color: var(--background-color);
             position: relative;
             display: flex;
             flex-direction: column;
             overflow: hidden;
             box-shadow: 0 12px 36px rgba(0,0,0,0.5);
-            border-radius: 0;
         }
 
-        @media (min-width: 401px) {
+        @media (min-width: 441px) {
             .app-container {
+                height: 92vh;
+                max-height: 850px;
                 border-radius: 24px;
                 border: 4px solid #2c2c2c;
             }
         }
 
-        /* Typography & Common Utilities */
         h1, h2, h3 { font-weight: 600; }
         input, button {
             font-family: inherit;
@@ -79,7 +82,7 @@
 
         .hidden { display: none !important; }
 
-        /* App Lock Screen Overlay */
+        /* Lock Screen Overlay */
         #app-lock-screen {
             position: absolute;
             top: 0;
@@ -109,8 +112,9 @@
             margin-bottom: 20px;
         }
 
-        /* Top Header */
+        /* Responsive Header */
         header {
+            min-height: 60px;
             height: 60px;
             background-color: var(--container-bg);
             display: flex;
@@ -119,6 +123,7 @@
             padding: 0 16px;
             border-bottom: 1px solid var(--border-color);
             z-index: 10;
+            flex-shrink: 0;
         }
 
         header .brand {
@@ -147,26 +152,29 @@
             background-color: rgba(255,255,255,0.05);
         }
 
-        /* Main Viewport Content area */
+        /* Viewport Content area */
         .view-content {
             flex: 1;
             overflow-y: auto;
             position: relative;
-            padding-bottom: 16px;
+            display: flex;
+            flex-direction: column;
         }
 
         .view-panel {
             display: none;
             height: 100%;
             flex-direction: column;
+            overflow-y: auto;
         }
 
         .view-panel.active {
             display: flex;
         }
 
-        /* Navigation Bar */
+        /* Safe Area Padded Navigation Bar */
         nav.bottom-nav {
+            min-height: 65px;
             height: 65px;
             background-color: var(--container-bg);
             border-top: 1px solid var(--border-color);
@@ -174,6 +182,8 @@
             justify-content: space-around;
             align-items: center;
             z-index: 10;
+            flex-shrink: 0;
+            padding-bottom: env(safe-area-inset-bottom);
         }
 
         .nav-item {
@@ -213,7 +223,6 @@
             text-align: center;
         }
 
-        /* Structural Lists */
         .list-section {
             padding: 16px;
         }
@@ -308,7 +317,7 @@
             align-items: center;
         }
 
-        /* Dedicated Window Overlays (Modals & Chat Canvas) */
+        /* Windows Overlays */
         .fullscreen-window {
             position: absolute;
             top: 0;
@@ -321,13 +330,13 @@
             flex-direction: column;
             transform: translateY(100%);
             transition: transform 0.3s cubic-bezier(0.1, 0.76, 0.55, 0.94);
+            overflow: hidden;
         }
 
         .fullscreen-window.active {
             transform: translateY(0);
         }
 
-        /* Forms & Interactive Components */
         .auth-form, .modal-form {
             padding: 24px;
             display: flex;
@@ -335,10 +344,11 @@
             gap: 16px;
             justify-content: center;
             height: 100%;
+            overflow-y: auto;
         }
 
         .form-title {
-            font-size: 28px;
+            font-size: 26px;
             margin-bottom: 8px;
             color: #fff;
             text-align: center;
@@ -369,6 +379,7 @@
             color: #fff;
             flex: 1;
             font-size: 15px;
+            width: 100%;
         }
 
         .btn {
@@ -392,17 +403,6 @@
             cursor: not-allowed;
         }
 
-        .btn-secondary {
-            background-color: transparent;
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-        }
-
-        .btn-danger {
-            background-color: var(--danger-color);
-            color: #fff;
-        }
-
         .text-link {
             color: var(--primary-color);
             cursor: pointer;
@@ -411,7 +411,7 @@
             margin-top: 8px;
         }
 
-        /* Drawers (Side Drawer Menu) */
+        /* Side Menu */
         .side-menu-overlay {
             position: absolute;
             top: 0;
@@ -496,15 +496,17 @@
             background-color: rgba(255,255,255,0.03);
         }
 
-        /* Dedicated Interactive Dedicated Chat View */
+        /* Dedicated Chat View */
         .chat-header {
             height: 60px;
+            min-height: 60px;
             background-color: var(--container-bg);
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             padding: 0 12px;
             gap: 8px;
+            flex-shrink: 0;
         }
 
         .chat-messages {
@@ -531,7 +533,7 @@
         }
 
         .message-bubble {
-            max-width: 75%;
+            max-width: 80%;
             padding: 10px 14px;
             border-radius: 16px;
             font-size: 14.5px;
@@ -566,6 +568,7 @@
             color: var(--primary-color);
             height: 22px;
             background-color: var(--background-color);
+            flex-shrink: 0;
         }
 
         .chat-input-area {
@@ -576,6 +579,8 @@
             align-items: center;
             gap: 8px;
             position: relative;
+            flex-shrink: 0;
+            padding-bottom: max(10px, env(safe-area-inset-bottom));
         }
 
         .chat-input-container {
@@ -591,6 +596,7 @@
             color: #fff;
             flex: 1;
             font-size: 14.5px;
+            width: 100%;
         }
 
         /* Voice Recording Styles */
@@ -661,7 +667,7 @@
             background: currentColor;
         }
 
-        /* Fullscreen WebRTC Unified Call Overlays */
+        /* Fullscreen WebRTC Call Overlay */
         #call-screen {
             background-color: #0b0b0b;
             z-index: 300;
@@ -675,6 +681,7 @@
             width: 100%;
             height: 100%;
         }
+        
         #call-screen.active {
             display: flex;
         }
@@ -704,7 +711,6 @@
             letter-spacing: 0.5px;
         }
 
-        /* WebRTC Continuous Video Matrix rendering layout */
         .video-canvas-stage {
             position: absolute;
             top: 0;
@@ -724,8 +730,8 @@
 
         video#localVideo {
             position: absolute;
-            width: 100px;
-            height: 150px;
+            width: 90px;
+            height: 135px;
             bottom: 100px;
             right: 16px;
             object-fit: cover;
@@ -755,7 +761,7 @@
             justify-content: center;
             align-items: center;
             gap: 24px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             z-index: 10;
         }
 
@@ -894,8 +900,6 @@
             </div>
         </div>
 
-        <!-- FULLSCREEN SUB-WINDOWS & INTERACTIVE OVERLAY MODALS -->
-
         <!-- Authentication Gateway Overlays -->
         <div id="window-auth" class="fullscreen-window active" style="z-index: 500;">
             <div class="auth-form" id="login-form-view">
@@ -940,6 +944,7 @@
                 <div class="text-link" id="toggle-auth-login-btn">Already initialized? Return to Login</div>
             </div>
         </div>
+
         <!-- Customise Profile Avatar Subview -->
         <div id="window-profile-edit" class="fullscreen-window">
             <header>
@@ -970,7 +975,7 @@
                 <div style="font-weight: 500;">Find Contact</div>
                 <div style="width:40px;"></div>
             </header>
-            <div class="modal-form" style="justify-content: flex-start; pt: 32px;">
+            <div class="modal-form" style="justify-content: flex-start; padding-top: 32px;">
                 <div class="form-subtitle" style="text-align: left;">Search for a peer using their global four-digit string identifier (e.g., mig-xxxx).</div>
                 <div class="input-wrapper">
                     <i class="fa-solid fa-magnifying-glass"></i>
@@ -981,7 +986,7 @@
             </div>
         </div>
 
-        <!-- Dedicated Conversational Room Window (Chat Engine) -->
+        <!-- Dedicated Chat Room Window -->
         <div id="window-chat" class="fullscreen-window">
             <div class="chat-header">
                 <button class="icon-btn" id="close-chat-window-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -1000,21 +1005,17 @@
                 </div>
             </div>
             
-            <!-- Real-time message streaming feed box -->
             <div class="chat-messages" id="chat-messages-container"></div>
             
-            <!-- Contextual Typing Presence Notification strip -->
             <div class="typing-status-bar" id="chat-typing-indicator-bar" style="visibility: hidden;">
                 <span id="chat-typing-text">typing...</span>
             </div>
 
-            <!-- Message dispatch console composition tray -->
             <div class="chat-input-area">
                 <div class="chat-input-container">
                     <input type="text" id="chat-message-input-field" placeholder="Write a message..." autocomplete="off">
                 </div>
                 
-                <!-- Dynamic Voice Recording Overlay -->
                 <div id="voice-recording-overlay" class="voice-rec-overlay hidden">
                     <div class="rec-dot"></div>
                     <span id="voice-timer" style="font-size: 13px; font-weight: 500; color: var(--danger-color);">00:00</span>
@@ -1027,15 +1028,13 @@
             </div>
         </div>
 
-        <!-- FULLSCREEN WEBRTC CALL INTERACTIVE MATRIX SYSTEM -->
+        <!-- FULLSCREEN WEBRTC CALL SYSTEM -->
         <div id="call-screen">
-            <!-- Dynamic Continuous Layer Video Stream Elements Matrix -->
             <div class="video-canvas-stage">
                 <video id="remoteVideo" autoplay playsinline></video>
                 <video id="localVideo" autoplay playsinline muted></video>
             </div>
 
-            <!-- Alternative Dynamic Voice Overlay Element Layer Matrix fallback structure -->
             <div id="voice-call-ui" class="hidden">
                 <div class="call-peer-identity">
                     <img class="avatar" id="voice-call-avatar" src="" alt="Avatar">
@@ -1044,14 +1043,12 @@
                 </div>
             </div>
 
-            <!-- Context overlay for active incoming identity structures -->
             <div class="call-peer-identity" id="call-identity-overlay" style="position: relative; pointer-events: none;">
                 <img class="avatar" id="call-screen-avatar" src="" alt="Avatar">
                 <div class="call-peer-name" id="call-screen-name">Connecting Peer...</div>
                 <div class="call-status-label" id="call-screen-status-label">INITIALIZING SIGNALLING MATRIX</div>
             </div>
 
-            <!-- Real-time Control Panel -->
             <div class="call-controls-panel">
                 <button class="control-btn" id="call-toggle-mute-btn" title="Toggle Mic"><i class="fa-solid fa-microphone"></i></button>
                 <button class="control-btn accept hidden" id="call-answer-action-btn" title="Accept Call"><i class="fa-solid fa-phone"></i></button>
@@ -1061,7 +1058,7 @@
 
     </div>
 
-    <!-- Script Block for App Lock Mechanics -->
+    <!-- App Lock Mechanics -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const unlockBtn = document.getElementById("app-unlock-btn");
@@ -1086,13 +1083,12 @@
         });
     </script>
 
-    <!-- Firebase Core App Bootstrapper Configuration & Realtime System Logic scripts -->
+    <!-- Firebase Core & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
         import { getDatabase, ref, set, get, child, push, update, onValue, off, remove, onDisconnect, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // COMPLETE FIREBASE HOOK ARCHITECTURE CONFIGURATION MATRIX
         const firebaseConfig = {
           apiKey: "AIzaSyB7JeWLU7tBdGm7xUkbrYR_tuQ1OjH3q7o",
           authDomain: "migcall-87803.firebaseapp.com",
@@ -1107,13 +1103,11 @@
         const auth = getAuth(app);
         const db = getDatabase(app);
 
-        // Core Global Application Variables
         let currentUserData = null; 
         let currentActiveChatId = null;
         let currentActiveChatPeerUid = null;
         let activeListeners = {}; 
 
-        // WebRTC Signaling Mechanics State
         let localStream = null;
         let peerConnection = null;
         let currentActiveCallRef = null;
@@ -1122,14 +1116,12 @@
         let callStartTime = null;
         let isMuted = false;
 
-        // Voice Recording Mechanics State
         let mediaRecorder = null;
         let audioChunks = [];
         let isRecordingVoice = false;
         let recTimerInterval = null;
         let recStartTime = null;
 
-        // WebRTC Connection Setup Configuration Configurations
         const rtcIceConfig = {
             iceServers: [
                 { urls: 'stun:stun.l.google.com:19302' },
@@ -1137,7 +1129,6 @@
             ]
         };
 
-        // Ringtone System using Tone.js
         const ToneRingtoneEngine = {
             synth: null,
             loopId: null,
@@ -1178,7 +1169,6 @@
             }
         };
 
-        // Profile Avatar Construction Mechanics (Universal SVG Generation)
         function generateEmojiSVGDataUrl(rawText) {
             const cleanText = Array.from(rawText).slice(0, 2).join('');
             const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
@@ -1188,7 +1178,6 @@
             return `data:image/svg+xml;utf8,${encodeURIComponent(svgContent)}`;
         }
 
-        // Internal UI Navigation Utilities
         function switchViewPanel(targetViewName) {
             document.querySelectorAll('.view-panel').forEach(view => view.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -1254,7 +1243,6 @@
             document.getElementById('edit-avatpreview').src = generateEmojiSVGDataUrl(e.target.value || '💬');
         });
 
-        // AUTHENTICATION AND LIFECYCLE MANAGEMENT ENGINE
         document.getElementById('submit-registration-btn').addEventListener('click', async () => {
             const name = document.getElementById('reg-display-name').value.trim();
             const emoji = document.getElementById('reg-emoji').value.trim() || '💬';
@@ -1404,7 +1392,6 @@
             currentUserData = null;
         }
 
-        // CONTACTS & FRIEND MANAGEMENT ENGINE
         document.getElementById('submit-search-friend-btn').addEventListener('click', async () => {
             const inputTargetId = document.getElementById('search-friend-userid').value.trim().toLowerCase();
             const feedbackEl = document.getElementById('search-result-feedback');
@@ -1622,7 +1609,6 @@
             });
         }
 
-        // REAL-TIME MESSAGING & TYPING HUB CHAT CONSOLE
         async function enterChatSessionRoom(peerUid) {
             const myUid = auth.currentUser.uid;
             currentActiveChatPeerUid = peerUid;
@@ -1942,7 +1928,6 @@
             }
         });
 
-        // FULLSCREEN WEBRTC HIGH-AVAILABILITY CALLING ENGINE
         document.getElementById('init-voice-call-btn').addEventListener('click', () => launchOutboundCallSequence('voice'));
         document.getElementById('init-video-call-btn').addEventListener('click', () => launchOutboundCallSequence('video'));
 
@@ -2297,7 +2282,6 @@
             callStartTime = null;
         }
 
-        // LOGGING SYSTEM HISTORY ENGINE
         async function appendLogEntryRecordNode(callData, status, duration) {
             const callerLogRef = ref(db, `callLogs/${callData.callerUid}`);
             const calleeLogRef = ref(db, `callLogs/${callData.calleeUid}`);
@@ -2384,7 +2368,6 @@
 
         function initiateDragSequence(e) {
             activeDraggingState = true;
-            const containerBounds = document.querySelector('.app-container').getBoundingClientRect();
             const thumbBounds = localVideoThumb.getBoundingClientRect();
             
             const clientX = e.type === 'touchstart' ? e.touches[0].clientX : e.clientX;
