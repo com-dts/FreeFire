@@ -36,7 +36,6 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        /* 100dvh for proper mobile browser bar handling */
         html, body {
             width: 100%;
             height: 100%;
@@ -49,7 +48,6 @@
             align-items: center;
         }
 
-        /* Responsive Container Frame */
         .app-container {
             width: 100%;
             max-width: 440px;
@@ -82,7 +80,6 @@
 
         .hidden { display: none !important; }
 
-        /* Lock Screen Overlay */
         #app-lock-screen {
             position: absolute;
             top: 0;
@@ -112,7 +109,6 @@
             margin-bottom: 20px;
         }
 
-        /* Responsive Header */
         header {
             min-height: 60px;
             height: 60px;
@@ -152,7 +148,6 @@
             background-color: rgba(255,255,255,0.05);
         }
 
-        /* Viewport Content area */
         .view-content {
             flex: 1;
             overflow-y: auto;
@@ -172,7 +167,6 @@
             display: flex;
         }
 
-        /* Safe Area Padded Navigation Bar */
         nav.bottom-nav {
             min-height: 65px;
             height: 65px;
@@ -317,7 +311,6 @@
             align-items: center;
         }
 
-        /* Windows Overlays */
         .fullscreen-window {
             position: absolute;
             top: 0;
@@ -411,7 +404,6 @@
             margin-top: 8px;
         }
 
-        /* Side Menu */
         .side-menu-overlay {
             position: absolute;
             top: 0;
@@ -496,7 +488,6 @@
             background-color: rgba(255,255,255,0.03);
         }
 
-        /* Dedicated Chat View */
         .chat-header {
             height: 60px;
             min-height: 60px;
@@ -507,6 +498,25 @@
             padding: 0 12px;
             gap: 8px;
             flex-shrink: 0;
+        }
+
+        .chat-search-bar-container {
+            padding: 8px 12px;
+            background-color: var(--container-bg);
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .chat-search-bar-container input {
+            flex: 1;
+            background-color: var(--background-color);
+            color: #fff;
+            padding: 6px 12px;
+            border-radius: 16px;
+            font-size: 13px;
+            border: 1px solid var(--border-color);
         }
 
         .chat-messages {
@@ -599,7 +609,6 @@
             width: 100%;
         }
 
-        /* Voice Recording Styles */
         .voice-rec-overlay {
             position: absolute;
             left: 12px;
@@ -667,7 +676,6 @@
             background: currentColor;
         }
 
-        /* Fullscreen WebRTC Call Overlay */
         #call-screen {
             background-color: #0b0b0b;
             z-index: 300;
@@ -803,7 +811,6 @@
 
     <div class="app-container">
         
-        <!-- INITIAL APP LOCK OVERLAY -->
         <div id="app-lock-screen">
             <div class="lock-icon-box">
                 <i class="fa-solid fa-lock"></i>
@@ -822,7 +829,6 @@
             <div id="lock-error-msg" style="color: var(--danger-color); font-size: 13px; margin-top: 12px; text-align: center;"></div>
         </div>
 
-        <!-- Top App Header Bar -->
         <header id="main-header">
             <div class="brand">
                 <i class="fa-solid fa-cloud-bolt"></i> migcall
@@ -833,20 +839,14 @@
             </div>
         </header>
 
-        <!-- Viewport Workspace Content -->
         <div class="view-content">
-            
-            <!-- Home / Chats View Panel -->
             <div id="view-home" class="view-panel active">
                 <div class="list-section">
                     <div class="list-title">Active Conversations</div>
-                    <div id="chat-list-container">
-                        <!-- Dynamic content entry hook -->
-                    </div>
+                    <div id="chat-list-container"></div>
                 </div>
             </div>
 
-            <!-- Requests View Panel -->
             <div id="view-requests" class="view-panel">
                 <div class="list-section">
                     <div class="list-title">Incoming Friend Requests</div>
@@ -854,17 +854,14 @@
                 </div>
             </div>
 
-            <!-- Call Logs View Panel -->
             <div id="view-calls" class="view-panel">
                 <div class="list-section">
                     <div class="list-title">Recent Calls History</div>
                     <div id="call-logs-container"></div>
                 </div>
             </div>
-
         </div>
 
-        <!-- Global Base Application Bottom Navigation Bar -->
         <nav class="bottom-nav" id="main-nav">
             <div class="nav-item active" data-view="home">
                 <i class="fa-solid fa-comment-sms"></i>
@@ -881,7 +878,6 @@
             </div>
         </nav>
 
-        <!-- Slide out Side Drawer Engine -->
         <div class="side-menu-overlay" id="side-menu-container">
             <div class="side-menu">
                 <div class="profile-summary">
@@ -900,7 +896,6 @@
             </div>
         </div>
 
-        <!-- Authentication Gateway Overlays -->
         <div id="window-auth" class="fullscreen-window active" style="z-index: 500;">
             <div class="auth-form" id="login-form-view">
                 <div class="form-title">Welcome to migcall</div>
@@ -945,7 +940,6 @@
             </div>
         </div>
 
-        <!-- Customise Profile Avatar Subview -->
         <div id="window-profile-edit" class="fullscreen-window">
             <header>
                 <button class="icon-btn close-window-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -968,7 +962,6 @@
             </div>
         </div>
 
-        <!-- Add Contact / Search Modals -->
         <div id="window-add-friend" class="fullscreen-window">
             <header>
                 <button class="icon-btn close-window-btn"><i class="fa-solid fa-chevron-left"></i></button>
@@ -999,12 +992,18 @@
                     <div class="item-meta" id="chat-peer-status-text" style="font-size: 10px;">Offline</div>
                 </div>
                 <div style="display: flex; gap: 2px;">
+                    <button class="icon-btn" id="toggle-chat-search-btn" title="Search Messages"><i class="fa-solid fa-magnifying-glass"></i></button>
                     <button class="icon-btn" id="init-voice-call-btn" title="Voice Call"><i class="fa-solid fa-phone"></i></button>
                     <button class="icon-btn" id="init-video-call-btn" title="Video Call"><i class="fa-solid fa-video"></i></button>
                     <button class="icon-btn" id="chat-dropdown-menu-btn" title="Clear Chat Records"><i class="fa-solid fa-trash-can"></i></button>
                 </div>
             </div>
             
+            <div class="chat-search-bar-container hidden" id="chat-search-container">
+                <input type="text" id="chat-search-input" placeholder="Search in chat history...">
+                <button class="icon-btn" id="close-chat-search-btn" style="width:32px; height:32px; font-size:14px;"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+
             <div class="chat-messages" id="chat-messages-container"></div>
             
             <div class="typing-status-bar" id="chat-typing-indicator-bar" style="visibility: hidden;">
@@ -1028,7 +1027,6 @@
             </div>
         </div>
 
-        <!-- FULLSCREEN WEBRTC CALL SYSTEM -->
         <div id="call-screen">
             <div class="video-canvas-stage">
                 <video id="remoteVideo" autoplay playsinline></video>
@@ -1058,7 +1056,6 @@
 
     </div>
 
-    <!-- App Lock Mechanics -->
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const unlockBtn = document.getElementById("app-unlock-btn");
@@ -1080,15 +1077,9 @@
             lockInput.addEventListener("keydown", (e) => {
                 if (e.key === "Enter") verifyAppPassword();
             });
-
-            // Request Notification Permissions for Secret Notifications
-            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
-                Notification.requestPermission();
-            }
         });
     </script>
 
-    <!-- Firebase Core & App Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
@@ -1174,32 +1165,25 @@
             }
         };
 
+        // Advanced Detailed Last Seen Formatter
         function formatLastSeen(timestamp) {
             if (!timestamp) return 'Offline';
-            const date = new Date(timestamp);
-            const now = new Date();
-            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            if (date.toDateString() === now.toDateString()) {
-                return `Last seen today at ${timeStr}`;
-            }
-            
-            const yesterday = new Date(now);
-            yesterday.setDate(now.getDate() - 1);
-            if (date.toDateString() === yesterday.toDateString()) {
-                return `Last seen yesterday at ${timeStr}`;
-            }
-            
-            return `Last seen ${date.toLocaleDateString([], { month: 'short', day: 'numeric' })} at ${timeStr}`;
-        }
+            const diffMs = Date.now() - timestamp;
+            if (diffMs < 0) return 'Just now';
 
-        function triggerSecretNotification(senderName) {
-            if ("Notification" in window && Notification.permission === "granted") {
-                new Notification("🔒 Secret Message Received", {
-                    body: `You have received a new secret message from ${senderName || 'a contact'}.`,
-                    icon: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/lock.svg"
-                });
+            const diffMins = Math.floor(diffMs / (1000 * 60));
+            if (diffMins < 1) return 'Last seen just now';
+            if (diffMins < 60) return `Last seen ${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+
+            const diffHours = Math.floor(diffMins / 60);
+            const remMins = diffMins % 60;
+            if (diffHours < 24) {
+                return `Last seen ${diffHours} hr${diffHours > 1 ? 's' : ''} ${remMins} min${remMins !== 1 ? 's' : ''} ago`;
             }
+
+            const diffDays = Math.floor(diffHours / 24);
+            const remHours = diffHours % 24;
+            return `Last seen ${diffDays} day${diffDays > 1 ? 's' : ''} ${remHours} hr${remHours !== 1 ? 's' : ''} ago`;
         }
 
         function generateEmojiSVGDataUrl(rawText) {
@@ -1415,7 +1399,6 @@
             initializeRequestsListener(user.uid);
             initializeGlobalIncomingCallListener(user.uid);
             initializeCallLogsListener(user.uid);
-            initializeGlobalNotificationListener(user.uid);
         }
 
         function tearDownActiveSessionContext() {
@@ -1424,25 +1407,6 @@
             });
             activeListeners = {};
             currentUserData = null;
-        }
-
-        function initializeGlobalNotificationListener(myUid) {
-            const unreadRef = ref(db, `unreadCounts/${myUid}`);
-            onValue(unreadRef, (snap) => {
-                if (!snap.exists()) return;
-                const counts = snap.val();
-                Object.keys(counts).forEach(chatId => {
-                    if (counts[chatId] > 0 && chatId !== currentActiveChatId) {
-                        const peerUid = chatId.split('_').find(id => id !== myUid);
-                        if (peerUid) {
-                            get(ref(db, `users/${peerUid}`)).then((pSnap) => {
-                                const pData = pSnap.val();
-                                triggerSecretNotification(pData ? pData.displayName : "Contact");
-                            });
-                        }
-                    }
-                });
-            });
         }
 
         document.getElementById('submit-search-friend-btn').addEventListener('click', async () => {
@@ -1641,7 +1605,7 @@
                             }
 
                             const lastMsg = messages[messages.length - 1];
-                            document.getElementById(`c-preview-${peerUid}`).innerText = lastMsg.type === 'voice' ? '🎤 Voice Message' : (lastMsg.isSecret ? '🔒 Secret Message' : lastMsg.text);
+                            document.getElementById(`c-preview-${peerUid}`).innerText = lastMsg.type === 'voice' ? '🎤 Voice Message' : lastMsg.text;
                             
                             if (lastMsg.timestamp) {
                                 const d = new Date(lastMsg.timestamp);
@@ -1676,9 +1640,10 @@
             await set(ref(db, `unreadCounts/${myUid}/${currentActiveChatId}`), 0);
 
             document.getElementById('chat-messages-container').innerHTML = '';
+            document.getElementById('chat-search-input').value = '';
+            document.getElementById('chat-search-container').classList.add('hidden');
             openModalWindow('window-chat');
 
-            // Fetch Last Seen info for chat header
             get(ref(db, `status/${peerUid}`)).then((sSnap) => {
                 const sData = sSnap.val();
                 const chatDot = document.getElementById('chat-peer-status-dot');
@@ -1702,88 +1667,7 @@
             }
 
             const msgCallback = onValue(chatMessagesRef, (snapshot) => {
-                const container = document.getElementById('chat-messages-container');
-                container.innerHTML = '';
-
-                if (!snapshot.exists()) return;
-
-                snapshot.forEach(childSnap => {
-                    const msg = childSnap.val();
-                    if (msg.timestamp <= clearedAt) return;
-
-                    const isMe = msg.senderId === myUid;
-                    const wrapper = document.createElement('div');
-                    wrapper.className = `message-bubble-wrapper ${isMe ? 'me' : 'other'}`;
-                    
-                    const timeString = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : '';
-                    
-                    if (msg.type === 'voice') {
-                        const msgId = childSnap.key;
-                        wrapper.innerHTML = `
-                            <div class="message-bubble">
-                                <div class="voice-player">
-                                    <button class="voice-play-btn" id="btn-play-${msgId}"><i class="fa-solid fa-play"></i></button>
-                                    <div class="voice-wave">
-                                        <div class="voice-progress" id="prog-${msgId}"></div>
-                                    </div>
-                                    <span style="font-size: 11px; font-weight: 500;">${msg.duration || '0:00'}</span>
-                                    <audio id="audio-${msgId}" src="${msg.audioUrl}" preload="metadata"></audio>
-                                </div>
-                                <span class="msg-time">${timeString}</span>
-                            </div>
-                        `;
-                    } else {
-                        wrapper.innerHTML = `
-                            <div class="message-bubble">
-                                ${escapeHTML(msg.text)}
-                                <span class="msg-time">${timeString}</span>
-                            </div>
-                        `;
-                    }
-                    container.appendChild(wrapper);
-
-                    if (msg.type === 'voice') {
-                        const msgId = childSnap.key;
-                        const playBtn = wrapper.querySelector(`#btn-play-${msgId}`);
-                        const audioEl = wrapper.querySelector(`#audio-${msgId}`);
-                        const progEl = wrapper.querySelector(`#prog-${msgId}`);
-
-                        if (playBtn && audioEl) {
-                            playBtn.addEventListener('click', () => {
-                                document.querySelectorAll('.chat-messages audio').forEach(a => {
-                                    if (a !== audioEl) {
-                                        a.pause();
-                                        a.currentTime = 0;
-                                        const pBtn = a.parentElement.querySelector('.voice-play-btn');
-                                        if (pBtn) pBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-                                    }
-                                });
-
-                                if (audioEl.paused) {
-                                    audioEl.play();
-                                    playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
-                                } else {
-                                    audioEl.pause();
-                                    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-                                }
-                            });
-
-                            audioEl.addEventListener('timeupdate', () => {
-                                if (audioEl.duration) {
-                                    const pct = (audioEl.currentTime / audioEl.duration) * 100;
-                                    progEl.style.width = `${pct}%`;
-                                }
-                            });
-
-                            audioEl.addEventListener('ended', () => {
-                                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-                                progEl.style.width = '0%';
-                            });
-                        }
-                    }
-                });
-
-                container.scrollTop = container.scrollHeight;
+                renderChatMessages(snapshot, clearedAt);
             });
 
             activeListeners['current_chat_msgs'] = { reference: chatMessagesRef, callback: msgCallback };
@@ -1804,6 +1688,125 @@
             });
 
             activeListeners['current_chat_typing'] = { reference: typingIndicatorRef, callback: typingCallback };
+        }
+
+        function renderChatMessages(snapshot, clearedAt, searchQuery = '') {
+            const container = document.getElementById('chat-messages-container');
+            container.innerHTML = '';
+
+            if (!snapshot.exists()) return;
+
+            const myUid = auth.currentUser.uid;
+            const queryLower = searchQuery.toLowerCase().trim();
+
+            snapshot.forEach(childSnap => {
+                const msg = childSnap.val();
+                if (msg.timestamp <= clearedAt) return;
+
+                if (queryLower && msg.type !== 'voice') {
+                    if (!msg.text.toLowerCase().includes(queryLower)) return;
+                }
+
+                const isMe = msg.senderId === myUid;
+                const wrapper = document.createElement('div');
+                wrapper.className = `message-bubble-wrapper ${isMe ? 'me' : 'other'}`;
+                
+                const timeString = msg.timestamp ? new Date(msg.timestamp).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' }) : '';
+                
+                if (msg.type === 'voice') {
+                    const msgId = childSnap.key;
+                    wrapper.innerHTML = `
+                        <div class="message-bubble">
+                            <div class="voice-player">
+                                <button class="voice-play-btn" id="btn-play-${msgId}"><i class="fa-solid fa-play"></i></button>
+                                <div class="voice-wave">
+                                    <div class="voice-progress" id="prog-${msgId}"></div>
+                                </div>
+                                <span style="font-size: 11px; font-weight: 500;">${msg.duration || '0:00'}</span>
+                                <audio id="audio-${msgId}" src="${msg.audioUrl}" preload="metadata"></audio>
+                            </div>
+                            <span class="msg-time">${timeString}</span>
+                        </div>
+                    `;
+                } else {
+                    wrapper.innerHTML = `
+                        <div class="message-bubble">
+                            ${escapeHTML(msg.text)}
+                            <span class="msg-time">${timeString}</span>
+                        </div>
+                    `;
+                }
+                container.appendChild(wrapper);
+
+                if (msg.type === 'voice') {
+                    const msgId = childSnap.key;
+                    const playBtn = wrapper.querySelector(`#btn-play-${msgId}`);
+                    const audioEl = wrapper.querySelector(`#audio-${msgId}`);
+                    const progEl = wrapper.querySelector(`#prog-${msgId}`);
+
+                    if (playBtn && audioEl) {
+                        playBtn.addEventListener('click', () => {
+                            document.querySelectorAll('.chat-messages audio').forEach(a => {
+                                if (a !== audioEl) {
+                                    a.pause();
+                                    a.currentTime = 0;
+                                    const pBtn = a.parentElement.querySelector('.voice-play-btn');
+                                    if (pBtn) pBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                                }
+                            });
+
+                            if (audioEl.paused) {
+                                audioEl.play();
+                                playBtn.innerHTML = '<i class="fa-solid fa-pause"></i>';
+                            } else {
+                                audioEl.pause();
+                                playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                            }
+                        });
+
+                        audioEl.addEventListener('timeupdate', () => {
+                            if (audioEl.duration) {
+                                const pct = (audioEl.currentTime / audioEl.duration) * 100;
+                                progEl.style.width = `${pct}%`;
+                            }
+                        });
+
+                        audioEl.addEventListener('ended', () => {
+                            playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+                            progEl.style.width = '0%';
+                        });
+                    }
+                }
+            });
+
+            container.scrollTop = container.scrollHeight;
+        }
+
+        // Chat History Search Event Listeners
+        document.getElementById('toggle-chat-search-btn').addEventListener('click', () => {
+            const searchBox = document.getElementById('chat-search-container');
+            searchBox.classList.toggle('hidden');
+            if (!searchBox.classList.contains('hidden')) {
+                document.getElementById('chat-search-input').focus();
+            }
+        });
+
+        document.getElementById('close-chat-search-btn').addEventListener('click', () => {
+            document.getElementById('chat-search-container').classList.add('hidden');
+            document.getElementById('chat-search-input').value = '';
+            triggerFilterRender();
+        });
+
+        document.getElementById('chat-search-input').addEventListener('input', triggerFilterRender);
+
+        async function triggerFilterRender() {
+            if (!currentActiveChatId) return;
+            const query = document.getElementById('chat-search-input').value;
+            const myUid = auth.currentUser.uid;
+            const clearedAtSnap = await get(ref(db, `userChats/${myUid}/${currentActiveChatId}/clearedAt`));
+            const clearedAt = clearedAtSnap.val() || 0;
+            const snapshot = await get(ref(db, `messages/${currentActiveChatId}`));
+            renderChatMessages(snapshot, clearedAt, query);
         }
 
         function exitChatSessionRoom() {
@@ -1852,7 +1855,6 @@
             const msgPayload = {
                 senderId: auth.currentUser.uid,
                 text: text,
-                isSecret: true,
                 timestamp: serverTimestamp()
             };
 
@@ -1945,7 +1947,6 @@
                             type: 'voice',
                             audioUrl: base64Audio,
                             duration: durStr,
-                            isSecret: true,
                             timestamp: serverTimestamp()
                         };
 
@@ -2484,6 +2485,6 @@
             document.removeEventListener('mousemove', executeDragMove);
             document.removeEventListener('touchmove', executeDragMove);
         }
-</script>
+    </script>
 </body>
 </html>
