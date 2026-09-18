@@ -1165,25 +1165,28 @@
             }
         };
 
-        // Advanced Detailed Last Seen Formatter
+        // WhatsApp Style Last Seen Formatter
         function formatLastSeen(timestamp) {
             if (!timestamp) return 'Offline';
-            const diffMs = Date.now() - timestamp;
-            if (diffMs < 0) return 'Just now';
+            const date = new Date(timestamp);
+            const now = new Date();
 
-            const diffMins = Math.floor(diffMs / (1000 * 60));
-            if (diffMins < 1) return 'Last seen just now';
-            if (diffMins < 60) return `Last seen ${diffMins} min${diffMins > 1 ? 's' : ''} ago`;
+            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: true });
 
-            const diffHours = Math.floor(diffMins / 60);
-            const remMins = diffMins % 60;
-            if (diffHours < 24) {
-                return `Last seen ${diffHours} hr${diffHours > 1 ? 's' : ''} ${remMins} min${remMins !== 1 ? 's' : ''} ago`;
+            const isToday = date.toDateString() === now.toDateString();
+
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1);
+            const isYesterday = date.toDateString() === yesterday.toDateString();
+
+            if (isToday) {
+                return `Last seen today at ${timeStr}`;
+            } else if (isYesterday) {
+                return `Last seen yesterday at ${timeStr}`;
+            } else {
+                const dateStr = date.toLocaleDateString([], { day: 'numeric', month: 'short' });
+                return `Last seen ${dateStr} at ${timeStr}`;
             }
-
-            const diffDays = Math.floor(diffHours / 24);
-            const remHours = diffHours % 24;
-            return `Last seen ${diffDays} day${diffDays > 1 ? 's' : ''} ${remHours} hr${remHours !== 1 ? 's' : ''} ago`;
         }
 
         function generateEmojiSVGDataUrl(rawText) {
@@ -1576,7 +1579,7 @@
                             const chatText = document.getElementById('chat-peer-status-text');
                             if (isOnline) {
                                 chatDot.className = 'status-indicator online';
-                                chatText.innerText = 'Active Online';
+                                chatText.innerText = 'Online';
                             } else {
                                 chatDot.className = 'status-indicator';
                                 chatText.innerText = formatLastSeen(sData ? sData.last_changed : null);
@@ -1650,7 +1653,7 @@
                 const chatText = document.getElementById('chat-peer-status-text');
                 if (sData && sData.state === 'online') {
                     chatDot.className = 'status-indicator online';
-                    chatText.innerText = 'Active Online';
+                    chatText.innerText = 'Online';
                 } else {
                     chatDot.className = 'status-indicator';
                     chatText.innerText = formatLastSeen(sData ? sData.last_changed : null);
