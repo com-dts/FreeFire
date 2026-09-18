@@ -1080,6 +1080,11 @@
             lockInput.addEventListener("keydown", (e) => {
                 if (e.key === "Enter") verifyAppPassword();
             });
+
+            // Request Notification Permissions for Secret Notifications
+            if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
         });
     </script>
 
@@ -1168,6 +1173,34 @@
                 this.isPlaying = false;
             }
         };
+
+        function formatLastSeen(timestamp) {
+            if (!timestamp) return 'Offline';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const timeStr = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            if (date.toDateString() === now.toDateString()) {
+                return `Last seen today at ${timeStr}`;
+            }
+            
+            const yesterday = new Date(now);
+            yesterday.setDate(now.getDate() - 1);
+            if (date.toDateString() === yesterday.toDateString()) {
+                return `Last seen yesterday at ${timeStr}`;
+            }
+            
+            return `Last seen ${date.toLocaleDateString([], { month: 'short', day: 'numeric' })} at ${timeStr}`;
+        }
+
+        function triggerSecretNotification(senderName) {
+            if ("Notification" in window && Notification.permission === "granted") {
+                new Notification("🔒 Secret Message Received", {
+                    body: `You have received a new secret message from ${senderName || 'a contact'}.`,
+                    icon: "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/svgs/solid/lock.svg"
+                });
+            }
+        }
 
         function generateEmojiSVGDataUrl(rawText) {
             const cleanText = Array.from(rawText).slice(0, 2).join('');
@@ -1382,6 +1415,7 @@
             initializeRequestsListener(user.uid);
             initializeGlobalIncomingCallListener(user.uid);
             initializeCallLogsListener(user.uid);
+            initializeGlobalNotificationListener(user.uid);
         }
 
         function tearDownActiveSessionContext() {
@@ -1390,6 +1424,25 @@
             });
             activeListeners = {};
             currentUserData = null;
+        }
+
+        function initializeGlobalNotificationListener(myUid) {
+            const unreadRef = ref(db, `unreadCounts/${myUid}`);
+            onValue(unreadRef, (snap) => {
+                if (!snap.exists()) return;
+                const counts = snap.val();
+                Object.keys(counts).forEach(chatId => {
+                    if (counts[chatId] > 0 && chatId !== currentActiveChatId) {
+                        const peerUid = chatId.split('_').find(id => id !== myUid);
+                        if (peerUid) {
+                            get(ref(db, `users/${peerUid}`)).then((pSnap) => {
+                                const pData = pSnap.val();
+                                triggerSecretNotification(pData ? pData.displayName : "Contact");
+                            });
+                        }
+                    }
+                });
+            });
         }
 
         document.getElementById('submit-search-friend-btn').addEventListener('click', async () => {
@@ -1546,17 +1599,23 @@
                     onValue(ref(db, `status/${peerUid}`), (sSnap) => {
                         const sData = sSnap.val();
                         const dot = document.getElementById(`c-status-${peerUid}`);
-                        if (sData && sData.state === 'online') {
+                        const isOnline = sData && sData.state === 'online';
+                        
+                        if (isOnline) {
                             dot.className = 'status-indicator online';
-                            if (currentActiveChatId && currentActiveChatPeerUid === peerUid) {
-                                document.getElementById('chat-peer-status-dot').className = 'status-indicator online';
-                                document.getElementById('chat-peer-status-text').innerText = 'Active Online';
-                            }
                         } else {
                             dot.className = 'status-indicator';
-                            if (currentActiveChatId && currentActiveChatPeerUid === peerUid) {
-                                document.getElementById('chat-peer-status-dot').className = 'status-indicator';
-                                document.getElementById('chat-peer-status-text').innerText = 'Offline';
+                        }
+
+                        if (currentActiveChatId && currentActiveChatPeerUid === peerUid) {
+                            const chatDot = document.getElementById('chat-peer-status-dot');
+                            const chatText = document.getElementById('chat-peer-status-text');
+                            if (isOnline) {
+                                chatDot.className = 'status-indicator online';
+                                chatText.innerText = 'Active Online';
+                            } else {
+                                chatDot.className = 'status-indicator';
+                                chatText.innerText = formatLastSeen(sData ? sData.last_changed : null);
                             }
                         }
                     });
@@ -1582,7 +1641,7 @@
                             }
 
                             const lastMsg = messages[messages.length - 1];
-                            document.getElementById(`c-preview-${peerUid}`).innerText = lastMsg.type === 'voice' ? '🎤 Voice Message' : lastMsg.text;
+                            document.getElementById(`c-preview-${peerUid}`).innerText = lastMsg.type === 'voice' ? '🎤 Voice Message' : (lastMsg.isSecret ? '🔒 Secret Message' : lastMsg.text);
                             
                             if (lastMsg.timestamp) {
                                 const d = new Date(lastMsg.timestamp);
@@ -1618,6 +1677,20 @@
 
             document.getElementById('chat-messages-container').innerHTML = '';
             openModalWindow('window-chat');
+
+            // Fetch Last Seen info for chat header
+            get(ref(db, `status/${peerUid}`)).then((sSnap) => {
+                const sData = sSnap.val();
+                const chatDot = document.getElementById('chat-peer-status-dot');
+                const chatText = document.getElementById('chat-peer-status-text');
+                if (sData && sData.state === 'online') {
+                    chatDot.className = 'status-indicator online';
+                    chatText.innerText = 'Active Online';
+                } else {
+                    chatDot.className = 'status-indicator';
+                    chatText.innerText = formatLastSeen(sData ? sData.last_changed : null);
+                }
+            });
 
             const clearedAtSnap = await get(ref(db, `userChats/${myUid}/${currentActiveChatId}/clearedAt`));
             const clearedAt = clearedAtSnap.val() || 0;
@@ -1779,6 +1852,7 @@
             const msgPayload = {
                 senderId: auth.currentUser.uid,
                 text: text,
+                isSecret: true,
                 timestamp: serverTimestamp()
             };
 
@@ -1871,6 +1945,7 @@
                             type: 'voice',
                             audioUrl: base64Audio,
                             duration: durStr,
+                            isSecret: true,
                             timestamp: serverTimestamp()
                         };
 
